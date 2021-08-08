@@ -522,8 +522,7 @@ namespace osuTK.Android
             get { return windowInfo.HasSurface && renderOn && !stopped; }
         }
 
-        private Stopwatch watchUpdate = new Stopwatch();
-        private long lastElapsedMilliseconds;
+        private double lastTick;
 
         private FrameEventArgs updateEventArgs = new FrameEventArgs();
 
@@ -536,12 +535,11 @@ namespace osuTK.Android
             if (!ReadyToRender)
                 return;
 
-            if (lastElapsedMilliseconds != 0)
-                updateEventArgs.Time = (double)(watchUpdate.ElapsedMilliseconds - lastElapsedMilliseconds) / 1000;
+            if (lastTick != 0)
+                updateEventArgs.Time = (tick - lastTick) / 1000;
 
-            watchUpdate.Restart();
             UpdateFrameInternal (updateEventArgs);
-            lastElapsedMilliseconds = watchUpdate.ElapsedMilliseconds;
+            lastTick = tick;
         }
 
         partial void log (string msg);
