@@ -523,6 +523,8 @@ namespace osuTK.Android
         }
 
         private Stopwatch watchUpdate = new Stopwatch();
+        private long lastElapsedMilliseconds;
+
         private FrameEventArgs updateEventArgs = new FrameEventArgs();
 
         // this method is called on the main thread if RenderOnUIThread is true
@@ -534,11 +536,12 @@ namespace osuTK.Android
             if (!ReadyToRender)
                 return;
 
-            if (watchUpdate.ElapsedTicks != 0)
-                updateEventArgs.Time = (double)watchUpdate.ElapsedMilliseconds / 1000;
+            if (lastElapsedMilliseconds != 0)
+                updateEventArgs.Time = (double)(watchUpdate.ElapsedMilliseconds - lastElapsedMilliseconds) / 1000;
 
-            UpdateFrameInternal (updateEventArgs);
             watchUpdate.Restart();
+            UpdateFrameInternal (updateEventArgs);
+            lastElapsedMilliseconds = watchUpdate.ElapsedMilliseconds;
         }
 
         partial void log (string msg);
