@@ -7,6 +7,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Security;
@@ -521,12 +522,8 @@ namespace osuTK.Android
             get { return windowInfo.HasSurface && renderOn && !stopped; }
         }
 
-        private DateTime prevUpdateTime;
-        private DateTime prevRenderTime;
-        private DateTime curUpdateTime;
-        private DateTime curRenderTime;
+        private Stopwatch watchUpdate = new Stopwatch();
         private FrameEventArgs updateEventArgs = new FrameEventArgs();
-        private FrameEventArgs renderEventArgs = new FrameEventArgs();
 
         // this method is called on the main thread if RenderOnUIThread is true
         private void RunIteration (CancellationToken token)
@@ -537,14 +534,11 @@ namespace osuTK.Android
             if (!ReadyToRender)
                 return;
 
-            curUpdateTime = DateTime.Now;
-            if (prevUpdateTime.Ticks != 0) {
-                var t = (curUpdateTime - prevUpdateTime).TotalSeconds;
-                updateEventArgs.Time = t;
-            }
+            if (watchUpdate.ElapsedTicks != 0)
+                updateEventArgs.Time = (double)watchUpdate.ElapsedMilliseconds / 1000;
 
             UpdateFrameInternal (updateEventArgs);
-            prevUpdateTime = curUpdateTime;
+            watchUpdate.Restart();
         }
 
         partial void log (string msg);
