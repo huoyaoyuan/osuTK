@@ -2,9 +2,9 @@ image: Visual Studio 2019
 build_script:
   - cmd: dotnet restore
   - cmd: dotnet run --project src/Generator.Bind/Generator.Bind.csproj -c:Release
-  - cmd: dotnet pack src/osuTK/osuTK.NS20.csproj -c:Release --include-symbols /p:Version=%APPVEYOR_BUILD_VERSION%
-  - cmd: msbuild /t:pack src/osuTK.iOS/osuTK.iOS.csproj /p:Configuration=Release /p:IncludeSymbols=True /p:Version=%APPVEYOR_BUILD_VERSION%
-  - cmd: msbuild /t:pack src/osuTK.Android/osuTK.Android.csproj /p:Configuration=Release /p:IncludeSymbols=True /p:Version=%APPVEYOR_BUILD_VERSION%
+  - cmd: dotnet pack src/osuTK/osuTK.NS20.csproj -c:Release /p:Version=%APPVEYOR_BUILD_VERSION%
+  - cmd: msbuild /t:pack src/osuTK.iOS/osuTK.iOS.csproj /p:Configuration=Release /p:Version=%APPVEYOR_BUILD_VERSION%
+  - cmd: msbuild /t:pack src/osuTK.Android/osuTK.Android.csproj /p:Configuration=Release /p:Version=%APPVEYOR_BUILD_VERSION%
 test: off
 version: 1.0.{build}
 artifacts:
