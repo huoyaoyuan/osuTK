@@ -140,7 +140,7 @@ namespace osuTK.iOS
         private iOSGameView view;
         private CADisplayLink displayLink;
 
-        public CADisplayLinkTimeSource (iOSGameView view, int preferredFramesPerSecond)
+        public CADisplayLinkTimeSource (iOSGameView view, CAFrameRateRange preferredFrameRateRange)
         {
             this.view = view;
 
@@ -150,7 +150,7 @@ namespace osuTK.iOS
             }
 
             displayLink = CADisplayLink.Create (this, selRunIteration);
-            displayLink.PreferredFramesPerSecond = preferredFramesPerSecond;
+            displayLink.PreferredFrameRateRange = preferredFrameRateRange;
             displayLink.Paused = true;
         }
 
@@ -730,9 +730,15 @@ namespace osuTK.iOS
         private WeakReference frameBufferWindow;
         private WeakReference frameBufferLayer;
 
+        /// <summary>
+        /// The frame rate range suggested for full-motion gaming experience, with the minimum reduced to 60 fps.
+        /// See https://developer.apple.com/documentation/quartzcore/optimizing_promotion_refresh_rates_for_iphone_13_pro_and_ipad_pro for more information.
+        /// </summary>
+        private static readonly CAFrameRateRange game_frame_rate_range = CAFrameRateRange.Create(60, 120, 120);
+
         public void Run()
         {
-            RunWithPreferredFramesPerSecond(0);
+            RunWithPreferredFrameRateRange(game_frame_rate_range);
         }
 
         public void Run(double updatesPerSecond)
@@ -743,7 +749,7 @@ namespace osuTK.iOS
             }
 
             if (updatesPerSecond == 0.0) {
-                RunWithPreferredFramesPerSecond (0);
+                RunWithPreferredFrameRateRange (game_frame_rate_range);
                 return;
             }
 
@@ -759,19 +765,13 @@ namespace osuTK.iOS
             Start ();
         }
 
-        [Obsolete ("Use either Run (float updatesPerSecond) or RunWithPreferredFramesPerSecond(int preferredFramesPerSecond)")]
-        public void Run(int preferredFramesPerSecond)
-        {
-            RunWithPreferredFramesPerSecond(preferredFramesPerSecond);
-        }
-
-        public void RunWithPreferredFramesPerSecond(int preferredFramesPerSecond)
+        public void RunWithPreferredFrameRateRange(CAFrameRateRange preferredFrameRateRange)
         {
             AssertValid ();
 
-            if (preferredFramesPerSecond < 0)
+            if (preferredFrameRateRange.Minimum < 0 || preferredFrameRateRange.Maximum < 0 || preferredFrameRateRange.Preferred < 0)
             {
-                throw new ArgumentException ("preferredFramesPerSecond");
+                throw new ArgumentException ("preferredFrameRateRange");
             }
 
             if (timesource != null)
@@ -779,7 +779,7 @@ namespace osuTK.iOS
                 timesource.Invalidate ();
             }
 
-            timesource = new CADisplayLinkTimeSource (this, preferredFramesPerSecond);
+            timesource = new CADisplayLinkTimeSource (this, preferredFrameRateRange);
 
             CreateFrameBuffer ();
             OnLoad (EventArgs.Empty);
