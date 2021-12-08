@@ -731,10 +731,10 @@ namespace osuTK.iOS
         private WeakReference frameBufferLayer;
 
         /// <summary>
-        /// The frame rate range suggested for full-motion gaming experience.
+        /// The frame rate range suggested for full-motion gaming experience, with the minimum reduced to 60 fps.
         /// See https://developer.apple.com/documentation/quartzcore/optimizing_promotion_refresh_rates_for_iphone_13_pro_and_ipad_pro for more information.
         /// </summary>
-        private static readonly CAFrameRateRange game_frame_rate_range = CAFrameRateRange.Create(80, 120, 120);
+        private static readonly CAFrameRateRange game_frame_rate_range = CAFrameRateRange.Create(60, 120, 120);
 
         public void Run()
         {
