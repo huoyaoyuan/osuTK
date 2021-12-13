@@ -150,7 +150,12 @@ namespace osuTK.iOS
             }
 
             displayLink = CADisplayLink.Create (this, selRunIteration);
-            displayLink.PreferredFrameRateRange = preferredFrameRateRange;
+
+            if (UIDevice.CurrentDevice.CheckSystemVersion(15, 0))
+                displayLink.PreferredFrameRateRange = preferredFrameRateRange;
+            else
+                displayLink.PreferredFramesPerSecond = (nint)preferredFrameRateRange.Preferred;
+
             displayLink.Paused = true;
         }
 
