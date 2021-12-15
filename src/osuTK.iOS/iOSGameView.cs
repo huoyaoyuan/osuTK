@@ -140,7 +140,7 @@ namespace osuTK.iOS
         private iOSGameView view;
         private CADisplayLink displayLink;
 
-        public CADisplayLinkTimeSource (iOSGameView view, CAFrameRateRange preferredFrameRateRange)
+        public CADisplayLinkTimeSource (iOSGameView view, (float min, float max, float pref) frameRateRange)
         {
             this.view = view;
 
@@ -152,9 +152,9 @@ namespace osuTK.iOS
             displayLink = CADisplayLink.Create (this, selRunIteration);
 
             if (UIDevice.CurrentDevice.CheckSystemVersion(15, 0))
-                displayLink.PreferredFrameRateRange = preferredFrameRateRange;
+                displayLink.PreferredFrameRateRange = CAFrameRateRange.Create(frameRateRange.min, frameRateRange.max, frameRateRange.pref);
             else
-                displayLink.PreferredFramesPerSecond = (nint)preferredFrameRateRange.Preferred;
+                displayLink.PreferredFramesPerSecond = (nint)frameRateRange.pref;
 
             displayLink.Paused = true;
         }
@@ -739,7 +739,7 @@ namespace osuTK.iOS
         /// The frame rate range suggested for full-motion gaming experience, with the minimum reduced to 60 fps.
         /// See https://developer.apple.com/documentation/quartzcore/optimizing_promotion_refresh_rates_for_iphone_13_pro_and_ipad_pro for more information.
         /// </summary>
-        private static readonly CAFrameRateRange game_frame_rate_range = CAFrameRateRange.Create(60, 120, 120);
+        private static readonly (float min, float max, float pref) game_frame_rate_range = (60, 120, 120);
 
         public void Run()
         {
@@ -770,11 +770,11 @@ namespace osuTK.iOS
             Start ();
         }
 
-        public void RunWithPreferredFrameRateRange(CAFrameRateRange preferredFrameRateRange)
+        public void RunWithPreferredFrameRateRange((float min, float max, float pref) preferredFrameRateRange)
         {
             AssertValid ();
 
-            if (preferredFrameRateRange.Minimum < 0 || preferredFrameRateRange.Maximum < 0 || preferredFrameRateRange.Preferred < 0)
+            if (preferredFrameRateRange.min < 0 || preferredFrameRateRange.max < 0 || preferredFrameRateRange.pref < 0)
             {
                 throw new ArgumentException ("preferredFrameRateRange");
             }
