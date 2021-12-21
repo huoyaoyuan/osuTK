@@ -25,9 +25,11 @@ using Android.Util;
 using Android.Views;
 using Android.Runtime;
 using Android.Graphics;
+using Android.Opengl;
 using osuTK.Platform.Egl;
 using SurfaceType = Android.Views.SurfaceType;
 using Size = System.Drawing.Size;
+using Javax.Microedition.Khronos.Opengles;
 
 namespace osuTK.Android
 {
@@ -81,6 +83,8 @@ namespace osuTK.Android
             ContextRenderingApi = GLVersion.ES1;
             mHolder = Holder;
             RenderThreadRestartRetries = 3;
+            PreserveEGLContextOnPause = true;
+            SetRenderer(new EmptyRenderer());
 
             // Add callback to get the SurfaceCreated etc events
             mHolder.AddCallback (this);
@@ -682,6 +686,27 @@ namespace osuTK.Android
                     size = value;
                     OnResize (EventArgs.Empty);
                 }
+            }
+        }
+
+        /// <summary>
+        /// On some devices, views inheriting <see cref="GLSurfaceView"/> need to call <see cref="GLSurfaceView.SetRenderer(IRenderer?)"/>,
+        /// even if the app manages GL calls on its own, in order to display any image on screen.
+        /// Therefore, this implementation is provided to make the view work without necessarily having to forward all GL calls
+        /// through the <see cref="GLSurfaceView.IRenderer"/> interface.
+        /// </summary>
+        private class EmptyRenderer : Java.Lang.Object, IRenderer
+        {
+            public void OnDrawFrame(IGL10 gl)
+            {
+            }
+
+            public void OnSurfaceChanged(IGL10 gl, int width, int height)
+            {
+            }
+
+            public void OnSurfaceCreated(IGL10 gl, Javax.Microedition.Khronos.Egl.EGLConfig config)
+            {
             }
         }
     }
