@@ -14,7 +14,7 @@ using osuTK.Platform;
 
 using Android.Content;
 using Android.Util;
-using Android.Views;
+using Android.Opengl;
 using Android.Runtime;
 
 using osuTK.Input;
@@ -25,7 +25,7 @@ using Android.App;
 namespace osuTK
 {
     [Register ("opentk_1_1/GameViewBase")]
-    public abstract class GameViewBase : SurfaceView, IGameWindow
+    public abstract class GameViewBase : GLSurfaceView, IGameWindow
     {
         private IGraphicsContext graphicsContext;
 
