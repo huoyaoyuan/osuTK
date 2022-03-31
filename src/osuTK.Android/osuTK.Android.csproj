@@ -1,4 +1,4 @@
-﻿<Project Sdk="MSBuild.Sdk.Extras/3.0.23">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\Common.props" />
   <PropertyGroup>
     <OutputType>Library</OutputType>
@@ -6,14 +6,9 @@
     <Title>ppy.osuTK.Android</Title>
     <RootNamespace>osuTK.Android</RootNamespace>
     <AssemblyName>osuTK.Android</AssemblyName>
-    <TargetFramework>monoandroid50</TargetFramework>
+    <TargetFramework>net6.0-android</TargetFramework>
+    <SupportedOSPlatformVersion>21.0</SupportedOSPlatformVersion>
   </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Core" />
-    <Reference Include="Mono.Android" />
-  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\osuTK\osuTK.NS20.csproj" />
   </ItemGroup>
